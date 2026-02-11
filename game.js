@@ -168,7 +168,8 @@ function showCorrectPopup() {
     
     // 获取中文信息
     const zhInfo = pokemonZhData[pokemon.id] || { name: pokemon.name, desc: '神秘的宝可梦' };
-    const pokemonTitle = pokemon.isShiny ? `✨ ${zhInfo.name}（闪光）` : zhInfo.name;
+    // 显示格式：#编号 + 名称（闪光标记）
+    const pokemonTitle = pokemon.isShiny ? `#${pokemon.id} ${zhInfo.name} ✨` : `#${pokemon.id} ${zhInfo.name}`;
     
     // 先显示弹窗（带占位符），图片异步加载
     content.innerHTML = `
