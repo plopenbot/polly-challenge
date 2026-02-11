@@ -275,8 +275,9 @@ function useSkill(skillType) {
             break;
             
         case 'change':
-            // 换题
-            const unusedQuestions = questionBank.filter(q => 
+            // 换题 - 从当前题库中抽取
+            const currentSource = gameState.currentTopic === 'science' ? scienceQuestionBank : questionBank;
+            const unusedQuestions = currentSource.filter(q => 
                 !gameState.selectedQuestions.some(sq => sq.question === q.question)
             );
             
