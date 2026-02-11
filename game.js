@@ -107,11 +107,13 @@ function selectAnswer(btn) {
         setTimeout(() => {
             // 检查是否获得奖励
             const questionNum = gameState.currentQuestionIndex + 1;
-            if (questionNum % 6 === 0 && questionNum < 30) {
-                showReward();
-            } else if (questionNum >= 30) {
-                // 第30题答对，直接通关
-                showCongrats();
+            if (questionNum % 6 === 0 && questionNum <= 30) {
+                // 第6、12、18、24、30题显示奖励（第30题显示闪光宝可梦）
+                if (questionNum === 30) {
+                    showCorrectPopup(); // 第30题显示闪光宝可梦，点继续后才通关
+                } else {
+                    showReward(); // 其他奖励题显示技能卡
+                }
             } else {
                 showCorrectPopup();
             }
@@ -171,6 +173,9 @@ function showCorrectPopup() {
     // 显示格式：#编号 + 名称（闪光标记）
     const pokemonTitle = pokemon.isShiny ? `#${pokemon.id} ${zhInfo.name} ✨` : `#${pokemon.id} ${zhInfo.name}`;
     
+    // 按钮文本：第30题显示"继续"，其他显示"下一题"
+    const buttonText = gameState.currentQuestionIndex === 29 ? '继续' : '下一题';
+    
     // 先显示弹窗（带占位符），图片异步加载
     content.innerHTML = `
         <div class="reward-icon">✅</div>
@@ -181,7 +186,7 @@ function showCorrectPopup() {
         ${pokemon.isShiny ? '<div class="shiny-badge">✨ 闪光宝可梦！</div>' : ''}
         <div class="pokemon-id" style="font-size: 1.2em; font-weight: bold; margin: 10px 0;">${pokemonTitle}</div>
         <div class="pokemon-desc" style="font-size: 0.9em; color: #666; padding: 0 20px; line-height: 1.5; margin-bottom: 15px;">${zhInfo.desc}</div>
-        <button class="reward-close-btn" onclick="closeCorrectPopup()">下一题</button>
+        <button class="reward-close-btn" onclick="closeCorrectPopup()">${buttonText}</button>
     `;
     
     popup.style.display = 'flex';
@@ -211,7 +216,14 @@ function showCorrectPopup() {
 // 关闭正确弹窗
 function closeCorrectPopup() {
     document.getElementById('correctPopup').style.display = 'none';
-    nextQuestion();
+    
+    // 检查是否是第30题（索引29）
+    if (gameState.currentQuestionIndex === 29) {
+        // 第30题答对，显示通关界面
+        showCongrats();
+    } else {
+        nextQuestion();
+    }
 }
 
 // 显示失败弹窗
