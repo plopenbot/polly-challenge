@@ -1,7 +1,7 @@
 // 宝可梦数据 - 使用 PokeAPI 获取图片
 // 使用更小的图片版本以提升加载速度
-// 主站图片: https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png (小尺寸)
-// 高清图片: https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{id}.png (大尺寸)
+// 主站图片: https://cdn.jsdelivr.net/gh/PokeAPI/sprites@latest/sprites/pokemon/{id}.png (小尺寸)
+// 高清图片: https://cdn.jsdelivr.net/gh/PokeAPI/sprites@latest/sprites/pokemon/other/official-artwork/{id}.png (大尺寸)
 
 const pokemonData = {
     total: 1025, // 目前共有1025只宝可梦
@@ -14,7 +14,7 @@ const pokemonData = {
         
         // 使用更小的图片版本（96x96），加载速度更快
         // 如果需要更大尺寸可以使用 other/official-artwork 路径
-        const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
+        const baseUrl = 'https://cdn.jsdelivr.net/gh/PokeAPI/sprites@latest/sprites/pokemon';
         
         return {
             id: id,
