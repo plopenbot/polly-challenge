@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宝可梦数据核查工具</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1, h2 { color: #333; }
+        .info-box { 
+            background: #f0f8ff; 
+            padding: 15px; 
+            border-left: 5px solid #667eea;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .highlight { background: #ffeaa7; }
+        .checklist {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🕵️‍♂️ 宝可梦数据核查工具</h1>
+        
+        <div class="info-box">
+            <p><strong>📋 检查目标：</strong>验证1025只宝可梦的编号、名称、属性正确对应</p>
+            <p><strong>🔍 检查方法：</strong>结合下方表格中的数据和在线图片逐一核对</p>
+            <p><strong>🏷️ 数据样本：</strong>前50只（完整数据见JSON文件）</p>
+        </div>
+        
+        <div class="section">
+            <h2>🔢 前50只宝可梦数据表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>中文名称</th>
+                        <th>属性描述</th>
+                        <th>检查状态</th>
+                        <th>图片检查</th>
+                    </tr>
+                </thead>
+                <tbody id="pokemonTableBody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="checklist">
+            <h2>📝 检查清单</h2>
+            <p><input type="checkbox" id="check1"> 编号#1-#1025连续且无重复</p>
+            <p><input type="checkbox" id="check2"> 前50只宝可梦名称正确</p>
+            <p><input type="checkbox" id="check3"> 属性描述格式为"属性：类型1/类型2"</p>
+            <p><input type="checkbox" id="check4"> 通过 <a href="https://plopenbot.github.io/polly-challenge/" target="_blank">在线游戏</a> 测试游戏内随机宝可梦显示</p>
+            <p><input type="checkbox" id="check5"> 已核对关键节点（#151梦幻、#493阿尔宙斯等）</p>
+        </div>
+        
+        <div class="section">
+            <h2>💾 数据文件</h2>
+            <ul>
+                <li><a href="pokemon_verification.json" target="_blank">完整JSON数据 (pokemon_verification.json)</a> - 包含所有1025条记录</li>
+                <li><a href="full_pokemon_list.csv" target="_blank">CSV格式数据 (full_pokemon_list.csv)</a> - 适合用Excel检查</li>
+                <li><a href="pokemon_verification_report.txt" target="_blank">验证报告 (pokemon_verification_report.txt)</a> - 本检查指南</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+    // 前50个宝可梦的示例数据
+    const samplePokemon = [
+        {"id": 1, "name": "妙蛙种子", "desc": "属性：草/毒"},
+        {"id": 2, "name": "妙蛙草", "desc": "属性：草/毒"},
+        {"id": 3, "name": "妙蛙花", "desc": "属性：草/毒"},
+        {"id": 4, "name": "小火龙", "desc": "属性：火"},
+        {"id": 5, "name": "火恐龙", "desc": "属性：火"},
+        {"id": 6, "name": "喷火龙", "desc": "属性：火/飞行"},
+        {"id": 7, "name": "杰尼龟", "desc": "属性：水"},
+        {"id": 8, "name": "卡咪龟", "desc": "属性：水"},
+        {"id": 9, "name": "水箭龟", "desc": "属性：水"},
+        {"id": 10, "name": "绿毛虫", "desc": "属性：虫"},
+        // 前50个的示例
+    ];
+    
+    async function loadData() {
+        try {
+            const response = await fetch('pokemon_verification.json');
+            const allData = await response.json();
+            const tbody = document.getElementById('pokemonTableBody');
+            
+            // 显示前50个
+            for (let i = 0; i < 50 && i < allData.length; i++) {
+                const p = allData[i];
+                const row = document.createElement('tr');
+                const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`;
+                const checkLink = `<a href="https://plopenbot.github.io/polly-challenge/pokemon_verification_checklist.html" target="_blank">点击查看</a>`;
+                
+                row.innerHTML = `
+                    <td><strong>#${p.id}</strong></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.desc}</td>
+                    <td><input type="checkbox" class="item-check" data-id="${p.id}"></td>
+                    <td>${checkLink}</td>
+                `;
+                
+                tbody.appendChild(row);
+            }
+        } catch (error) {
+            console.error('加载失败:', error);
+        }
+    }
+    
+    // 页面加载后填充数据
+    document.addEventListener('DOMContentLoaded', loadData);
+    
+    // 全选功能
+    document.addEventListener('click', function(e) {
+        if (e.target.type === 'checkbox') {
+            const id = e.target.dataset.id;
+            console.log(`标记宝可梦 #${id} 为已检查`);
+        }
+    });
+    </script>
+</body>
+</html>
